@@ -1,24 +1,27 @@
-import java.util.HashMap;
-
+// Time Complexity :  O(n)
+// Space Complexity : O(1)
 class Solution {
     public int characterReplacement(String s, int k) {
-        HashMap<Character, Integer> freqs = new HashMap<>();
-        int res = 0, i = 0, maxFreq = 0;
-
-        for (int j = 0; j < s.length(); j++) {
-            char c = s.charAt(j);
-            freqs.put(c, freqs.getOrDefault(c, 0) + 1);
-            maxFreq = Math.max(maxFreq, freqs.get(c));
-
-            while ((j - i + 1) - maxFreq > k) {
-                char left = s.charAt(i);
-                freqs.put(left, freqs.get(left) - 1);
-                i++;
+        // Make an array of size 26...
+        int[] arr = new int[26];
+        // Initialize largestCount, maxlen & beg pointer...
+        int largestCount = 0, beg = 0, maxlen = 0;
+        // Traverse all characters through the loop...
+        for(int end = 0; end < s.length(); end ++){
+            arr[s.charAt(end) - 'A']++;
+            // Get the largest count of a single, unique character in the current window...
+            largestCount = Math.max(largestCount, arr[s.charAt(end) - 'A']);
+            // We are allowed to have at most k replacements in the window...
+            // So, if max character frequency + distance between beg and end is greater than k...
+            // this means we have considered changing more than k charactres. So time to shrink window...
+            // Then there are more characters in the window than we can replace, and we need to shrink the window...
+            if(end - beg + 1 - largestCount > k){     // The main equation is: end - beg + 1 - largestCount...
+                arr[s.charAt(beg) - 'A']--;
+                beg ++;
             }
-
-            res = Math.max(res, j - i + 1);
+            // Get the maximum length of repeating character...
+            maxlen = Math.max(maxlen, end - beg + 1);     // end - beg + 1 = size of the current window...
         }
-
-        return res;
+        return maxlen;      // Return the maximum length of repeating character...
     }
 }
